@@ -10,23 +10,13 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 class LoadDatabase {
 
+    /**
+     * Инициализация БД (можно предварительно, например, вставить тестовые данные или выполнить проверки на валидность схемы и т.п.)
+     */
     @Bean
     CommandLineRunner initDatabase(ProductRepository repository) {
         return args -> {
-            log.info("Preloading " + repository.save(new Product("Pepsi",
-                    "Pepsi Co",
-                    100,
-                    20,
-                    30,
-                    3000
-            )));
-            log.info("Preloading " + repository.save(new Product("Coca-Cola",
-                    "Coca-Cola",
-                    200,
-                    30,
-                    40,
-                    2000
-            )));
+            log.info("Load database");
         };
     }
 }

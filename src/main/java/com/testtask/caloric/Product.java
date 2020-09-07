@@ -10,6 +10,9 @@ import javax.persistence.Id;
 @Entity
 class Product {
 
+    /**
+     * Сущность продукта (мапится на отдельную таблицу product
+     */
     @Id
     @GeneratedValue
     private Long id;
@@ -19,16 +22,19 @@ class Product {
     private double proteins;
     private double fats;
     private double carbohydrates;
+    // флаг доступности в выборке пользователям
+    private boolean isAviable = false;
 
     public Product() {
     }
 
-    public Product(String name, String manufacturer, double calories, double proteins, double fats, double carbohydrates) {
+    public Product(String name, String manufacturer, double calories, double proteins, double fats, double carbohydrates, boolean isAviable) {
         this.name = name;
         this.manufacturer = manufacturer;
         this.calories = calories;
         this.proteins = proteins;
         this.fats = fats;
         this.carbohydrates = carbohydrates;
+        this.isAviable = isAviable;
     }
 }
