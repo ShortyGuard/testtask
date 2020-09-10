@@ -1,63 +1,55 @@
 package com.testtask.caloric.controller;
 
-import com.testtask.caloric.service.EntityNotFoundException;
-import com.testtask.caloric.repository.ProductRepository;
-import com.testtask.caloric.repository.ProductUpdateRepository;
+import com.testtask.caloric.controller.exception.UndefinedActionExeption;
+import com.testtask.caloric.dto.ProductDTO;
+import com.testtask.caloric.dto.ProductUpdateOrderDTO;
 import com.testtask.caloric.model.Product;
-import com.testtask.caloric.model.ProductUpdate;
+import com.testtask.caloric.model.ProductUpdateOrder;
+import com.testtask.caloric.service.IAdminApiService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-class ProductUpdateController {
+@RequestMapping("/admin")
+class AdminApiController {
 
-    private final ProductUpdateRepository repository;
-    private final ProductRepository productRepository;
+    @Autowired
+    private IAdminApiService adminApiService;
 
-    ProductUpdateController(ProductRepository productRepository, ProductUpdateRepository repository) {
-        this.repository = repository;
-        this.productRepository  = productRepository;
-    }
+    @Autowired
+    private ModelMapper modelMapper;
 
     /**
      * Для администратора: Возвращает все запросы на изменение продуктов
      */
-    @GetMapping("/productUpdates")
-    List<ProductUpdate> all() {
-        return repository.findAll();
-    }
+    @GetMapping("/productUpdateOrders")
+    List<ProductUpdateOrderDTO.ResponseProductUpdateOrder.Private> getAllProductUpdateOrders(
+            @RequestParam(name = "productId", required = false) Long productId) {
+        if (productId == null) {
+            return adminApiService.findAllProductUpdateOrders().stream()
+                    .map(this::convertToProductUpdateOrderDto)
+                    .collect(Collectors.toList());
+        }
 
-
-    /**
-     * Для администратора: Возвращает все запросы на изменение продукта по идентификатору продукта
-     */
-    @GetMapping("/productUpdates/search/{productId}")
-    List<ProductUpdate> searchByName(@PathVariable Long productId) {
-
-        return repository.findByProductId(productId);
+        return adminApiService.findByProductId(productId).stream()
+                .map(this::convertToProductUpdateOrderDto)
+                .collect(Collectors.toList());
     }
 
     /**
      * Для администратора: Возвращает запрос на изменение продукта по идентификатору
      */
-    @GetMapping("/productUpdates/{id}")
-    ProductUpdate one(@PathVariable Long id) {
+    @GetMapping("/productUpdateOrders/{id}")
+    ProductUpdateOrderDTO.ResponseProductUpdateOrder.Private one(@PathVariable Long id) {
 
-        return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(id));
+        return convertToProductUpdateOrderDto(adminApiService.findByProductUpdateOrderId(id));
     }
-
-    /**
-     * Создает от пользователя запрос на изменение продукта по идентификатору.
-     * ИДЕНТИФИКАТОР можно внести в тело запроса, но сделал так
-     */
-/*    @PutMapping("/products/{id}")
-    ProductUpdate addProductUpdate(@RequestBody ProductUpdate newProductUpdate, @PathVariable Long id) {
-
-        newProductUpdate.setProductId(id);
-        return repository.save(newProductUpdate);
-    }*/
 
     /**
      * Для администратора: Принятие решения о публикации изменения.
@@ -65,41 +57,42 @@ class ProductUpdateController {
      * action == {ACCEPT|DENY}
      * Проставится флаг обработки запроса
      */
-    @PostMapping("/productUpdates/{id}/{action}")
-    ProductUpdate replaceEmployee(@PathVariable Long id, @PathVariable String action) {
+    @PostMapping("/productUpdateOrders/{id}/{action}")
+    ProductUpdateOrderDTO.ResponseProductUpdateOrder.Private processProductUpdateOrder(@PathVariable Long id,
+                                                                     @Valid @NotBlank @PathVariable String action) {
 
-        ProductUpdate productUpdate = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(id));
-
-        switch (action)
+        if (action.equals("ACCEPT"))
         {
-            case "ACCEPT":
-            {
-                //update product
-                Product product = productRepository.findById(productUpdate.getProductId())
-                        .orElseThrow(() -> new EntityNotFoundException(id));
-
-                product.setName(productUpdate.getName());
-                product.setManufacturer(productUpdate.getManufacturer());
-                product.setCalories(productUpdate.getCalories());
-                product.setFats(productUpdate.getFats());
-                product.setProteins(productUpdate.getProteins());
-                product.setCarbohydrates(productUpdate.getCarbohydrates());
-
-                productRepository.save(product);
-
-                productUpdate.setProcessed(true);
-                break;
-            }
-            case "DENY":
-            {
-                productUpdate.setProcessed(true);
-                break;
-            }
+            return convertToProductUpdateOrderDto(adminApiService.doProcessProductUpdateOrder(id, true));
+        }
+        else if (action.equals("DENY")) {
+            return convertToProductUpdateOrderDto(adminApiService.doProcessProductUpdateOrder(id, false));
         }
 
-        return repository.save(productUpdate);
+        throw new UndefinedActionExeption("action is not defined. Use: ACCEPT|DENY");
     }
 
+    @PostMapping("/products/{id}/{action}")
+    ProductDTO.ResponseProduct.Private publishProduct(@PathVariable Long id,
+                              @Valid @NotBlank @PathVariable String action) {
 
+        if (action.equals("PUBLISH"))
+        {
+            return convertToProductPrivateDto(adminApiService.doPublishProduct(id, true));
+        }
+        else if (action.equals("HIDE")) {
+            return convertToProductPrivateDto(adminApiService.doPublishProduct(id, false));
+        }
+
+        throw new UndefinedActionExeption("action is not defined. Use: PUBLISH|HIDE");
+    }
+
+    private ProductDTO.ResponseProduct.Private convertToProductPrivateDto(Product product) {
+
+        return modelMapper.map(product, ProductDTO.ResponseProduct.Private.class);
+    }
+
+    private ProductUpdateOrderDTO.ResponseProductUpdateOrder.Private convertToProductUpdateOrderDto(ProductUpdateOrder productUpdateOrder) {
+        return modelMapper.map(productUpdateOrder, ProductUpdateOrderDTO.ResponseProductUpdateOrder.Private.class);
+    }
 }

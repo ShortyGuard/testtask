@@ -1,4 +1,4 @@
-package com.testtask.caloric.controller;
+package com.testtask.caloric.controller.exception;
 
 public class UndefinedActionExeption extends RuntimeException{
     public UndefinedActionExeption(String message) {

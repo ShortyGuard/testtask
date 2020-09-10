@@ -1,5 +1,7 @@
-package com.testtask.caloric.service;
+package com.testtask.caloric.controller;
 
+import com.testtask.caloric.controller.exception.EntityNotFoundException;
+import com.testtask.caloric.controller.exception.UndefinedActionExeption;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +25,11 @@ public class ApiControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<MessageException> handleThereIsNoSuchUserException(EntityNotFoundException ex) {
         return new ResponseEntity<>(new MessageException(ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UndefinedActionExeption.class)
+    public ResponseEntity<MessageException> handleUndefinedActionExeption(UndefinedActionExeption ex) {
+        return new ResponseEntity<>(new MessageException(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.testtask.caloric.controller;
+package com.testtask.caloric.controller.exception;
 
 public class EntityNotFoundException extends RuntimeException {
 

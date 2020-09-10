@@ -10,9 +10,9 @@ import java.util.Date;
  */
 @Data
 @Entity
-@Table(name = "product_update")
+@Table(name = "product_update_order")
 public
-class ProductUpdate {
+class ProductUpdateOrder {
 
     @Id
     @GeneratedValue
@@ -48,10 +48,10 @@ class ProductUpdate {
     @Column(name = "is_processed")
     private boolean isProcessed = false;
 
-    public ProductUpdate() {
+    public ProductUpdateOrder() {
     }
 
-    public ProductUpdate(Long productId, String name, String manufacturer, double calories, double proteins, double fats, double carbohydrates) {
+    public ProductUpdateOrder(Long productId, String name, String manufacturer, double calories, double proteins, double fats, double carbohydrates) {
         this.productId = productId;
         this.name = name;
         this.manufacturer = manufacturer;

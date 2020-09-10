@@ -1,36 +1,40 @@
 package com.testtask.caloric.service;
 
+import com.testtask.caloric.controller.exception.EntityNotFoundException;
 import com.testtask.caloric.model.Product;
-import com.testtask.caloric.model.ProductUpdate;
+import com.testtask.caloric.model.ProductUpdateOrder;
 import com.testtask.caloric.repository.ProductRepository;
 import com.testtask.caloric.repository.ProductUpdateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ProductService implements IProductService {
+public class ProductApiService implements IProductApiService {
 
+    //TODO: заменить на интерфейс сервиса
     @Autowired
     private ProductRepository productRepository;
 
     @Autowired
     private ProductUpdateRepository productUpdateRepository;
 
-    /*
-        @Override
-        public List<Product> getAviableProductsList(int page, int size) {
-            PageRequest pageReq
-                    = PageRequest.of(page, size);
-
-            Page<Product> products = productRepository.findByIsAviable(true, pageReq);
-            return products.getContent();
-        }
-    */
     @Override
     public List<Product> getAviableProductsList() {
         return productRepository.findByIsAviable(true);
+    }
+
+    @Override
+    public List<Product> getAviableProductsList(int page, int size, String sortDir, String sort) {
+        PageRequest pageReq
+                = PageRequest.of(page - 1, size, Sort.Direction.fromString(sortDir), sort);
+
+        Page<Product> products = productRepository.findByIsAviable(true, pageReq);
+        return products.getContent();
     }
 
     @Override
@@ -58,7 +62,7 @@ public class ProductService implements IProductService {
 
         updatedProduct.setId(id);
 
-        ProductUpdate productUpdate = new ProductUpdate(
+        ProductUpdateOrder productUpdateOrder = new ProductUpdateOrder(
                 id,
                 product.getName(),
                 product.getManufacturer(),
@@ -67,7 +71,7 @@ public class ProductService implements IProductService {
                 product.getFats(),
                 product.getCarbohydrates());
 
-        productUpdateRepository.save(productUpdate);
+        productUpdateRepository.save(productUpdateOrder);
 
         return updatedProduct;
     }

@@ -1,15 +1,12 @@
 package com.testtask.caloric.service;
 
-import com.testtask.caloric.dto.RestDTO;
 import com.testtask.caloric.model.Product;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public interface IProductService {
-//    List<Product> getAviableProductsList(int page, int size);
+public interface IProductApiService {
     List<Product> getAviableProductsList();
+    List<Product> getAviableProductsList(int page, int size, String sortDir, String sort);
 
     Product findAviableProductById(Long id);
 
@@ -18,4 +15,5 @@ public interface IProductService {
     Product save(Product newProduct);
 
     Product updateProduct(Long id, Product updatedProduct);
+
 }
