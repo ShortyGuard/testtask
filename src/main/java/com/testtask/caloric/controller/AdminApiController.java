@@ -1,5 +1,10 @@
-package com.testtask.caloric;
+package com.testtask.caloric.controller;
 
+import com.testtask.caloric.service.EntityNotFoundException;
+import com.testtask.caloric.repository.ProductRepository;
+import com.testtask.caloric.repository.ProductUpdateRepository;
+import com.testtask.caloric.model.Product;
+import com.testtask.caloric.model.ProductUpdate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,19 +45,19 @@ class ProductUpdateController {
     ProductUpdate one(@PathVariable Long id) {
 
         return repository.findById(id)
-                .orElseThrow(() -> new ProductUpdateNotFoundException(id));
+                .orElseThrow(() -> new EntityNotFoundException(id));
     }
 
     /**
      * Создает от пользователя запрос на изменение продукта по идентификатору.
      * ИДЕНТИФИКАТОР можно внести в тело запроса, но сделал так
      */
-    @PutMapping("/products/{id}")
+/*    @PutMapping("/products/{id}")
     ProductUpdate addProductUpdate(@RequestBody ProductUpdate newProductUpdate, @PathVariable Long id) {
 
         newProductUpdate.setProductId(id);
         return repository.save(newProductUpdate);
-    }
+    }*/
 
     /**
      * Для администратора: Принятие решения о публикации изменения.
@@ -64,7 +69,7 @@ class ProductUpdateController {
     ProductUpdate replaceEmployee(@PathVariable Long id, @PathVariable String action) {
 
         ProductUpdate productUpdate = repository.findById(id)
-                .orElseThrow(() -> new ProductUpdateNotFoundException(id));
+                .orElseThrow(() -> new EntityNotFoundException(id));
 
         switch (action)
         {
@@ -72,7 +77,7 @@ class ProductUpdateController {
             {
                 //update product
                 Product product = productRepository.findById(productUpdate.getProductId())
-                        .orElseThrow(() -> new ProductNotFoundException(id));
+                        .orElseThrow(() -> new EntityNotFoundException(id));
 
                 product.setName(productUpdate.getName());
                 product.setManufacturer(productUpdate.getManufacturer());

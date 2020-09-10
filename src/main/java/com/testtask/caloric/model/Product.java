@@ -2,12 +2,11 @@ package com.testtask.caloric;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
+@Table(name = "product")
 class Product {
 
     /**
@@ -15,26 +14,31 @@ class Product {
      */
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "manufacturer")
     private String manufacturer;
+
+    @Column(name = "calories")
     private double calories;
+
+    @Column(name = "proteins")
     private double proteins;
+
+    @Column(name = "fats")
     private double fats;
+
+    @Column(name = "carbohydrates")
     private double carbohydrates;
+
     // флаг доступности в выборке пользователям
+    @Column(name = "is_aviable")
     private boolean isAviable = false;
 
     public Product() {
-    }
-
-    public Product(String name, String manufacturer, double calories, double proteins, double fats, double carbohydrates, boolean isAviable) {
-        this.name = name;
-        this.manufacturer = manufacturer;
-        this.calories = calories;
-        this.proteins = proteins;
-        this.fats = fats;
-        this.carbohydrates = carbohydrates;
-        this.isAviable = isAviable;
     }
 }

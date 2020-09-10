@@ -1,10 +1,8 @@
-package com.testtask.caloric;
+package com.testtask.caloric.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -12,35 +10,54 @@ import java.util.Date;
  */
 @Data
 @Entity
+@Table(name = "product_update")
+public
 class ProductUpdate {
 
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private Long id;
+
     // идентификатор продукта. НЕ СТАЛ делать сслыкой на таблицу продуктов, чтобы не городить лишнего кода и проверок.
+    @Column(name = "product_id")
     private Long productId;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "manufacturer")
     private String manufacturer;
+
+    @Column(name = "calories")
     private double calories;
+
+    @Column(name = "proteins")
     private double proteins;
+
+    @Column(name = "fats")
     private double fats;
+
+    @Column(name = "carbohydrates")
     private double carbohydrates;
+
+    @Column(name = "update_date")
     private Date updateDate   = new Date();
+
     // флаг для администратора - обработан запрос или нет
+    @Column(name = "is_processed")
     private boolean isProcessed = false;
 
     public ProductUpdate() {
     }
 
-    public ProductUpdate(Long productId, String name, String manufacturer, double calories, double proteins, double fats, double carbohydrates, Date updateDate, boolean isProcessed) {
-        this.productId  = productId;
+    public ProductUpdate(Long productId, String name, String manufacturer, double calories, double proteins, double fats, double carbohydrates) {
+        this.productId = productId;
         this.name = name;
         this.manufacturer = manufacturer;
         this.calories = calories;
         this.proteins = proteins;
         this.fats = fats;
         this.carbohydrates = carbohydrates;
-        this.updateDate = updateDate;
-        this.isProcessed = isProcessed;
     }
 }
