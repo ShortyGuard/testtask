@@ -5,16 +5,16 @@ import com.testtask.caloric.model.Product;
 import com.testtask.caloric.service.IProductApiService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Контроллер обработки запросов пользователей
+ */
 @RestController
 @RequestMapping("/products")
 class ProductApiController {
@@ -27,42 +27,35 @@ class ProductApiController {
 
     /**
      * Запрашивает список опубликованных продуктов доступных для просмотра пользователям
-     * При передаче параметра name присходит нечеткий поиск по имени товара
+     * При передаче параметра name происходит нечеткий поиск по имени товара
      *
-     * @return весь список опубликованных продуктов в простом представлении
+     * @return весь список опубликованных продуктов в простом представлении по-странично
      */
-    //TODO: надо вставить пайджинг и проверку строки на минимальную длину
     @GetMapping
     public List<ProductDTO.ResponseProduct.Basic> getProducts(
-            @RequestParam(name = "name", required = false) String name) {
+            @RequestParam(name = "name", required = false) String name,
+            @Valid PageParams pageParams) {
 
         if (name == null) {
-            List<Product> products = productService.getAviableProductsList();
+            List<Product> products = productService.getAviableProductsList(pageParams.getPage(),
+                    pageParams.getSize(),
+                    pageParams.getSortDir(),
+                    pageParams.getSort());
             return products.stream()
                     .map(this::convertToProductBasicDto)
                     .collect(Collectors.toList());
         } else {
-            List<Product> products = productService.findAviableProductsByName(name);
+            List<Product> products = productService.findAviableProductsByName(name,
+                    pageParams.getPage(),
+                    pageParams.getSize(),
+                    pageParams.getSortDir(),
+                    pageParams.getSort());
             return products.stream()
                     .map(this::convertToProductBasicDto)
                     .collect(Collectors.toList());
         }
     }
 
-    @GetMapping("/pageble")
-    @ResponseBody
-    public List<ProductDTO.ResponseProduct.Basic> getProducts(
-            @RequestParam(name = "name", required = false) String name,
-            @Valid PageParams pageParams) {
-
-        List<Product> products = productService.getAviableProductsList(pageParams.getPage(),
-                pageParams.getSize(),
-                pageParams.getSortDir(),
-                pageParams.getSort());
-        return products.stream()
-                .map(this::convertToProductBasicDto)
-                .collect(Collectors.toList());
-    }
 
     /**
      * Получение доступного продукта по идентификатору
@@ -75,6 +68,9 @@ class ProductApiController {
         return convertToProductPublicDto(product);
     }
 
+    /**
+     * Запрос на создание нового продукта
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProductDTO.ResponseProduct.Public createProduct(
@@ -85,7 +81,7 @@ class ProductApiController {
 
 
     /**
-     * Создает от пользователя запрос на изменение продукта по идентификатору.
+     * Создает от пользователя запрос на изменение продукта по идентификатору продукта.
      * ИДЕНТИФИКАТОР можно внести в тело запроса, но сделал так
      */
     @PutMapping("{id}")
@@ -94,15 +90,19 @@ class ProductApiController {
         return convertToProductPublicDto(productService.updateProduct(id, updatedProduct));
     }
 
+    /**
+     * функция конвертации сущности в нужный DTO
+     */
     private ProductDTO.ResponseProduct.Basic convertToProductBasicDto(Product product) {
-        ProductDTO.ResponseProduct.Basic productBasicDto = modelMapper.map(product, ProductDTO.ResponseProduct.Basic.class);
 
-        return productBasicDto;
+        return modelMapper.map(product, ProductDTO.ResponseProduct.Basic.class);
     }
 
+    /**
+     * функция конвертации сущности в нужный DTO
+     */
     private ProductDTO.ResponseProduct.Public convertToProductPublicDto(Product product) {
-        ProductDTO.ResponseProduct.Public productPublicDto = modelMapper.map(product, ProductDTO.ResponseProduct.Public.class);
 
-        return productPublicDto;
+        return modelMapper.map(product, ProductDTO.ResponseProduct.Public.class);
     }
 }

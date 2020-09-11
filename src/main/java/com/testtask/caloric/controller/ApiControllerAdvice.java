@@ -1,7 +1,7 @@
 package com.testtask.caloric.controller;
 
 import com.testtask.caloric.controller.exception.EntityNotFoundException;
-import com.testtask.caloric.controller.exception.UndefinedActionExeption;
+import com.testtask.caloric.controller.exception.UndefinedActionException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Обработка исключении при работе контролерров
+ */
 @ControllerAdvice
 public class ApiControllerAdvice extends ResponseEntityExceptionHandler {
 
@@ -27,13 +30,13 @@ public class ApiControllerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new MessageException(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(UndefinedActionExeption.class)
-    public ResponseEntity<MessageException> handleUndefinedActionExeption(UndefinedActionExeption ex) {
+    @ExceptionHandler(UndefinedActionException.class)
+    public ResponseEntity<MessageException> handleUndefinedActionException(UndefinedActionException ex) {
         return new ResponseEntity<>(new MessageException(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
 

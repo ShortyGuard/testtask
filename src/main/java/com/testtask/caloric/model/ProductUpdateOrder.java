@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Сущность заявки на изменение атрибутов продукта
+ * Сущность заявки на изменение атрибутов продукта (мапится на отдельную таблицу product_update_order)
  */
 @Data
 @Entity

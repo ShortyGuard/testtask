@@ -8,6 +8,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
+/**
+ * DTO для сущности продукта
+ */
 public enum ProductDTO {
     ;
 
@@ -46,6 +49,9 @@ public enum ProductDTO {
     public enum RequestProduct {
         ;
 
+        /**
+         * DTO на запрос создания продукта
+         */
         @Getter
         @Setter
         @NoArgsConstructor
@@ -62,6 +68,9 @@ public enum ProductDTO {
     public enum ResponseProduct {
         ;
 
+        /**
+         * Простое представление продукта пользователю
+         */
         @Getter
         @Setter
         @NoArgsConstructor
@@ -72,6 +81,9 @@ public enum ProductDTO {
 
         }
 
+        /**
+         * Расширенное представление продукта пользователю
+         */
         @Getter
         @Setter
         @NoArgsConstructor
@@ -85,6 +97,9 @@ public enum ProductDTO {
             double carbohydrates;
         }
 
+        /**
+         * Представление для администратора
+         */
         @Getter
         @Setter
         @NoArgsConstructor

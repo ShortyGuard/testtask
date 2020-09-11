@@ -4,13 +4,16 @@ import com.testtask.caloric.model.Product;
 
 import java.util.List;
 
+/**
+ * Интерфейс сервиса работы пользователя с продуктом
+ */
 public interface IProductApiService {
-    List<Product> getAviableProductsList();
+
     List<Product> getAviableProductsList(int page, int size, String sortDir, String sort);
 
-    Product findAviableProductById(Long id);
+    List<Product> findAviableProductsByName(String name, int page, int size, String sortDir, String sort);
 
-    List<Product> findAviableProductsByName(String name);
+    Product findAviableProductById(Long id);
 
     Product save(Product newProduct);
 

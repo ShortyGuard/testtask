@@ -49,45 +49,64 @@ CREATE ROLE test WITH PASSWORD 'test';
 ALTER ROLE test WITH LOGIN;
 CREATE DATABASE test OWNER test;
 
-Реализация сделана через 2 сущности: Product и ProductUpdate
+Реализация сделана через 2 сущности: Product и ProductUpdateOrder
 Product - это сущность продукта
-ProductUpdate - это сущность запроса на изменение.
+ProductUpdateOrder - это сущность запроса на изменение.
 
 **Запуск приложения** 
 mvn clean spring-boot:run
 
 **Примеры запросов пользователей**
 
-Все продукты опубликованные администратором:
+Все продукты опубликованные администратором:<br>
 curl --location --request GET 'localhost:8080/products'
 
-Продукт с конкретным идентификатором:
+Продукт с конкретным идентификатором:<br>
 curl --location --request GET 'localhost:8080/products/{id}'
 
-Внесение нового продукта:
+Поиск по имени (нечеткий):<br>
+curl --location --request GET 'localhost:8080/products?name=[значение]'
+
+Внесение нового продукта:<br>
 curl --location --request POST 'localhost:8080/products' \
---header 'Content-Type: text/plain' \
+--header 'Content-Type: application/json' \
 --data-raw '{"name": "Coca-Cola","manufacturer": "Coca","calories": 500.0,"proteins": 23.0,"fats": 1.0,"carbohydrates": 444.0}'
 
-Поиск по имени (нечеткий):
-curl --location --request GET 'localhost:8080/search/{name}'
 
-Внесение изменений по идентификатору продукта:
+
+Внесение запроса на изменения по идентификатору продукта:<br>
 curl --location --request PUT 'localhost:8080/products/{id}' \
 --header 'Content-type: application/json' \
 --data-raw '{"name": "Coca-Cola 3","manufacturer": "Coca 5","calories": 500.0,"proteins": 23.0,"fats": 1.0,"carbohydrates": 444.0}'
 
 **Примеры запросов для администратора**
 
-Просмотр присланных запросов на изменение по идентификатору продукта:
-curl --location --request GET 'localhost:8080/productUpdates/search/{id}'
+Просмотр всех присланных запросов на изменение<br>
+curl --location --request GET 'localhost:8080/admin/productUpdateOrders'
 
-Принятие решения о правильности присланных изменений по идентификатору изменений:
-curl --location --request POST 'localhost:8080/productUpdates/{id}/ACCEPT'
-Принятие решения об отклонении присланных изменений:
-curl --location --request POST 'localhost:8080/productUpdates/{id}/DENY'
+Просмотр присланного запроса на изменение по идентификатору продукта:<br>
+curl --location --request GET 'localhost:8080/admin/productUpdateOrders?productId=[значение]'
 
-Принятие решения о публикации продукта:
-curl --location --request POST 'localhost:8080/products/{id}/PUBLISH'
-Принятие решения об сокрытии продукта:
-curl --location --request POST 'localhost:8080/products/{id}/HIDE'
+Просмотр присланного запроса на изменение по идентификатору:<br>
+curl --location --request GET 'localhost:8080/admin/productUpdateOrders/{id}'
+
+Принятие решения о правильности присланных изменений по идентификатору изменений:<br>
+curl --location --request POST 'localhost:8080/admin/productUpdates/{id}/ACCEPT'
+
+Принятие решения об отклонении присланных изменений:<br>
+curl --location --request POST 'localhost:8080/admin/productUpdates/{id}/DENY'
+
+Принятие решения о публикации продукта:<br>
+curl --location --request POST 'localhost:8080/admin/products/{id}/PUBLISH'
+
+Принятие решения об сокрытии продукта:<br>
+curl --location --request POST 'localhost:8080/admin/products/{id}/HIDE'
+
+**Постраничный вывод**
+Все запросы возвращающие коллекции возвращают данные по-странично. 
+По-умоланию возвращается первая страница.
+Для задания параметров страницы используются параметры запроса:<br>
+page - номер запрашиваемой страницы<br>
+size - кол-во элементов на странице (по-умолчанию равно 5)<br>
+sortDir - направление сортировки элементов, может принимать значения ASC|DESC (по-умолчанию равно ASC)<br>
+sort - поле элемента, по которому ведется сортировка, может принимать значения name|manufacturer (по-умолчанию равно name)

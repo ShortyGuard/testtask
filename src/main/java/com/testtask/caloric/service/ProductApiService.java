@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Сервис работы пользователя с продуктом
+ */
 @Service
 public class ProductApiService implements IProductApiService {
 
@@ -22,11 +25,6 @@ public class ProductApiService implements IProductApiService {
 
     @Autowired
     private ProductUpdateRepository productUpdateRepository;
-
-    @Override
-    public List<Product> getAviableProductsList() {
-        return productRepository.findByIsAviable(true);
-    }
 
     @Override
     public List<Product> getAviableProductsList(int page, int size, String sortDir, String sort) {
@@ -46,8 +44,13 @@ public class ProductApiService implements IProductApiService {
     }
 
     @Override
-    public List<Product> findAviableProductsByName(String name) {
-        return productRepository.findAviableProductByNameContainingIgnoreCaseAndIsAviable(name, true);
+    public List<Product> findAviableProductsByName(String name, int page, int size, String sortDir, String sort) {
+        PageRequest pageReq
+                = PageRequest.of(page - 1, size, Sort.Direction.fromString(sortDir), sort);
+
+        Page<Product> products = productRepository.findAviableProductByNameContainingIgnoreCaseAndIsAviable(name, true, pageReq);
+
+        return products.getContent();
     }
 
     @Override

@@ -3,13 +3,15 @@ package com.testtask.caloric.service;
 import com.testtask.caloric.model.Product;
 import com.testtask.caloric.model.ProductUpdateOrder;
 
-import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Интерфейс сервиса работы администратора
+ */
 public interface IAdminApiService {
-    List<ProductUpdateOrder> findAllProductUpdateOrders();
+    List<ProductUpdateOrder> findAllProductUpdateOrders(int page, int size, String sortDir, String sort);
 
-    List<ProductUpdateOrder> findByProductId(Long productId);
+    List<ProductUpdateOrder> findByProductId(Long productId, int page, int size, String sortDir, String sort);
 
     ProductUpdateOrder findByProductUpdateOrderId(Long id);
 

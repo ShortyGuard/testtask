@@ -4,19 +4,18 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
+/**
+ * Сущность продукта (мапится на отдельную таблицу product)
+ */
 @Data
 @Entity
 @Table(name = "product")
 public
 class Product {
 
-    /**
-     * Сущность продукта (мапится на отдельную таблицу product
-     */
+
     @Id
     @GeneratedValue
     @Column(name = "id")

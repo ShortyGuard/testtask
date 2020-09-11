@@ -3,12 +3,14 @@ package com.testtask.caloric.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Value;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
+/**
+ * DTO на представление сущности запроса на изменение продукта
+ */
 public enum ProductUpdateOrderDTO {
     ;
 
@@ -51,6 +53,9 @@ public enum ProductUpdateOrderDTO {
     public enum RequestProductUpdateOrder {
         ;
 
+        /**
+         * Представление для создания запроса на изменение продукта
+         */
         @Getter
         @Setter
         @NoArgsConstructor
@@ -68,7 +73,9 @@ public enum ProductUpdateOrderDTO {
     public enum ResponseProductUpdateOrder {
         ;
 
-
+        /**
+         * Представление изменения продукта для администратора
+         */
         @Getter
         @Setter
         @NoArgsConstructor

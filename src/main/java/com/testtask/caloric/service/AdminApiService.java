@@ -6,10 +6,16 @@ import com.testtask.caloric.model.ProductUpdateOrder;
 import com.testtask.caloric.repository.ProductRepository;
 import com.testtask.caloric.repository.ProductUpdateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Сервис работы администратора
+ */
 @Service
 public class AdminApiService implements IAdminApiService {
 
@@ -20,13 +26,23 @@ public class AdminApiService implements IAdminApiService {
     private ProductRepository productRepository;
 
     @Override
-    public List<ProductUpdateOrder> findAllProductUpdateOrders() {
-       return productUpdateRepository.findAll();
+    public List<ProductUpdateOrder> findAllProductUpdateOrders(int page, int size, String sortDir, String sort) {
+        PageRequest pageReq
+                = PageRequest.of(page - 1, size, Sort.Direction.fromString(sortDir), sort);
+
+        Page<ProductUpdateOrder> productUpdateOrders = productUpdateRepository.findAll(pageReq);
+
+        return productUpdateOrders.getContent();
     }
 
     @Override
-    public List<ProductUpdateOrder> findByProductId(Long productId) {
-        return productUpdateRepository.findByProductId(productId);
+    public List<ProductUpdateOrder> findByProductId(Long productId, int page, int size, String sortDir, String sort) {
+        PageRequest pageReq
+                = PageRequest.of(page - 1, size, Sort.Direction.fromString(sortDir), sort);
+
+        Page<ProductUpdateOrder> productUpdateOrders = productUpdateRepository.findByProductId(productId, pageReq);
+
+        return productUpdateOrders.getContent();
     }
 
     @Override

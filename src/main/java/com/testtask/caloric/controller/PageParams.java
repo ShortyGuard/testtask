@@ -1,15 +1,13 @@
 package com.testtask.caloric.controller;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.data.domain.PageRequest;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 
+/**
+ * Класс параметров для пейджинга. Используется для задания значений по-умолчанию и при валидации переданных значений
+ */
 @Data
 public class PageParams  {
     @Positive(message = "page must be greater than 0")
